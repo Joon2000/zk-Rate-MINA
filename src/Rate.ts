@@ -10,10 +10,19 @@ export class Rate extends SmartContract {
     this.participantNum.set(Field(0));
   }
 
-  @method async update(newRate: Field, finalRate: Field) {
+  @method async update(newRate: Field) {
     const currentRate = this.rate.get();
     this.rate.requireEquals(currentRate);
     const currentParticipantNum = this.participantNum.get();
     this.participantNum.requireEquals(currentParticipantNum);
+
+    const updatdedParticipantNum = currentParticipantNum.add(1);
+    const updatedRate = currentRate
+      .mul(currentParticipantNum)
+      .add(newRate)
+      .div(updatdedParticipantNum);
+
+    this.participantNum.set(updatdedParticipantNum);
+    this.rate.set(updatedRate);
   }
 }
